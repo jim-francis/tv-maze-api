@@ -20,18 +20,24 @@
 async function searchShows(query) {
   // TODO: Make an ajax request to the searchShows api.  Remove
   // hard coded data.
-  const res = await axios.get(`https://api.tvmaze.com/search/shows?q=${query}`)
-  const result = res.data
-  const showData = [];
-  for (let show of result) {
-    showData.push({
-      id: show.show.id,
-      name: show.show.name,
-      summary: show.show.summary,
-      image: show.show.image.medium
-    })
+  try {
+    const res = await axios.get(`https://api.tvmaze.com/search/shows?q=${query}`)
+    const result = res.data
+    const showData = [];
+    const noImg = "https://store-images.s-microsoft.com/image/apps.65316.13510798887490672.6e1ebb25-96c8-4504-b714-1f7cbca3c5ad.f9514a23-1eb8-4916-a18e-99b1a9817d15?mode=scale&q=90&h=300&w=300"
+    for (let show of result) {
+      showData.push({
+        id: show.show.id,
+        name: show.show.name,
+        summary: show.show.summary,
+        image: show.show.image.medium
+      })
+    }
+    return showData;
+  } catch (e) {
+    alert("Something broke!")
+    console.log(e)
   }
-  return showData;
 }
 
 
@@ -50,12 +56,12 @@ function populateShows(shows) {
          <div class="card" data-show-id="${show.id}">
            <div class="card-body">
              <h5 class="card-title">${show.name}</h5>
+             <img class="card-img-top" src=${show.image}>
              <p class="card-text">${show.summary}</p>
            </div>
          </div>
        </div>
       `);
-
     $showsList.append($item);
   }
 }
