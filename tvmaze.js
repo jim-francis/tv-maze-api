@@ -30,7 +30,7 @@ async function searchShows(query) {
         id: show.show.id,
         name: show.show.name,
         summary: show.show.summary,
-        image: !show.show.image.medium ? noImg : show.show.image.medium
+        image: show.show.image.medium ? show.show.image.medium : noImg
       })
     }
     return showData;
