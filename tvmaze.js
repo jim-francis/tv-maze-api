@@ -64,16 +64,34 @@ function populateShows(shows) {
              <h5 class="card-title">${show.name}</h5>
              <img class="card-img-top" src=${show.image}>
              <p class="card-text">${show.summary}</p>
+             <button class = "episode-button" id="${show.id}">List Episodes</button>
            </div>
          </div>
        </div>
       `);
     $showsList.append($item);
   }
+  episodeButtonListener();
+}
+
+function episodeButtonListener() {
+  $(".episode-button").on("click", async function () {
+    let episodes = await getEpisodes(this.id);
+    populateEpisodes(episodes)
+  })
 }
 
 function populateEpisodes(episodes) {
-  const $episodeArea = $("#episode-area")
+  const $episodesArea = $("#episodes-area")
+  const $episodesList = $("#episodes-list")
+  $episodesList.empty();
+
+  for (let episode of episodes) {
+    let $item = $(
+      `<li>${episode.name} (Season ${episode.season}, Number ${episode.name})</li>`
+    )
+    $episodesList.append($item)
+  }
 }
 
 
@@ -88,11 +106,14 @@ $("#search-form").on("submit", async function handleSearch(evt) {
   let query = $("#search-query").val();
   if (!query) return;
 
-  $("#episodes-area").hide();
+  $("#episodes-area").show();
 
   let shows = await searchShows(query);
 
   populateShows(shows);
+
+  // let episodes = await getEpisodes();
+  // populateEpisodes(episodes);
 });
 
 
@@ -100,8 +121,8 @@ $("#search-form").on("submit", async function handleSearch(evt) {
  *      { id, name, season, number }
  */
 
-async function getEpisodes() {
-  const res = await axios.get("http://api.tvmaze.com/shows/1925/episodes")
+async function getEpisodes(id) {
+  const res = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`)
   const episodeData = []
   for (let episode of res.data) {
     episodeData.push({
