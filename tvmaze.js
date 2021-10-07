@@ -22,6 +22,7 @@ async function searchShows(query) {
   // hard coded data.
   try {
     const res = await axios.get(`https://api.tvmaze.com/search/shows?q=${query}`)
+    console.log(res)
     const showData = [];
     const noImg = "https://store-images.s-microsoft.com/image/apps.65316.13510798887490672.6e1ebb25-96c8-4504-b714-1f7cbca3c5ad.f9514a23-1eb8-4916-a18e-99b1a9817d15?mode=scale&q=90&h=300&w=300"
     for (let show of res.data) {
@@ -71,6 +72,10 @@ function populateShows(shows) {
   }
 }
 
+function populateEpisodes(episodes) {
+  const $episodeArea = $("#episode-area")
+}
+
 
 /** Handle search form submission:
  *    - hide episodes area
@@ -87,9 +92,7 @@ $("#search-form").on("submit", async function handleSearch(evt) {
 
   let shows = await searchShows(query);
 
-
   populateShows(shows);
-
 });
 
 
@@ -97,7 +100,18 @@ $("#search-form").on("submit", async function handleSearch(evt) {
  *      { id, name, season, number }
  */
 
-async function getEpisodes(id) {
+async function getEpisodes() {
+  const res = await axios.get("http://api.tvmaze.com/shows/1925/episodes")
+  const episodeData = []
+  for (let episode of res.data) {
+    episodeData.push({
+      id: episode.id,
+      name: episode.name,
+      season: episode.season,
+      number: episode.number
+    })
+  }
+  return episodeData;
   // TODO: get episodes from tvmaze
   //       you can get this by making GET request to
   //       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
