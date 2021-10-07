@@ -22,16 +22,21 @@ async function searchShows(query) {
   // hard coded data.
   try {
     const res = await axios.get(`https://api.tvmaze.com/search/shows?q=${query}`)
-    const result = res.data
     const showData = [];
     const noImg = "https://store-images.s-microsoft.com/image/apps.65316.13510798887490672.6e1ebb25-96c8-4504-b714-1f7cbca3c5ad.f9514a23-1eb8-4916-a18e-99b1a9817d15?mode=scale&q=90&h=300&w=300"
-    for (let show of result) {
-      showData.push({
+    for (let show of res.data) {
+      let result = {
         id: show.show.id,
         name: show.show.name,
-        summary: show.show.summary,
-        image: show.show.image.medium ? show.show.image.medium : noImg
-      })
+        summary: show.show.summary
+      }
+      try {
+        result.image = show.show.image.medium
+      } catch (e) {
+        console.log(e)
+        result.image = noImg;
+      }
+      showData.push(result)
     }
     return showData;
   } catch (e) {
@@ -82,7 +87,9 @@ $("#search-form").on("submit", async function handleSearch(evt) {
 
   let shows = await searchShows(query);
 
+
   populateShows(shows);
+
 });
 
 
@@ -97,3 +104,4 @@ async function getEpisodes(id) {
 
   // TODO: return array-of-episode-info, as described in docstring above
 }
+
